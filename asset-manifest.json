@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/BoeSchedule/static/css/main.49fc8e4c.css",
+    "main.js": "/BoeSchedule/static/js/main.6f9e2c26.js",
+    "static/js/453.ad49d1db.chunk.js": "/BoeSchedule/static/js/453.ad49d1db.chunk.js",
+    "index.html": "/BoeSchedule/index.html",
+    "main.49fc8e4c.css.map": "/BoeSchedule/static/css/main.49fc8e4c.css.map",
+    "main.6f9e2c26.js.map": "/BoeSchedule/static/js/main.6f9e2c26.js.map",
+    "453.ad49d1db.chunk.js.map": "/BoeSchedule/static/js/453.ad49d1db.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.49fc8e4c.css",
+    "static/js/main.6f9e2c26.js"
+  ]
+}
