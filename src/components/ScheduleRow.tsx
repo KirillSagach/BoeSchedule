@@ -12,7 +12,7 @@ interface ScheduleRowProps {
   date: string;
   time: string;
   championship: string;
-  stage: string;
+  stage?: string;
   place: string;
   session: string;
   isLightTheme?: boolean;
@@ -40,7 +40,12 @@ const ScheduleRow: React.FC<ScheduleRowProps> = ({
   optionally,
 }) => {
   const commentators = useMemo(() => {
-    return [commentator1, commentator2].filter(Boolean) as string[];
+    const filtered = [commentator1, commentator2].filter(Boolean) as string[];
+    // Если оба комментатора пустые, возвращаем "Оригинальная дорожка"
+    if (filtered.length === 0) {
+      return ['Оригинальная дорожка'];
+    }
+    return filtered;
   }, [commentator1, commentator2]);
   
   // Нормализуем время к формату ЧЧ:ММ
@@ -95,9 +100,11 @@ const ScheduleRow: React.FC<ScheduleRowProps> = ({
             <div className="championship">
               {formatChampionship}
             </div>
-            <div className="stage">
-              {formatStage}
-            </div>
+            {formatStage && (
+              <div className="stage">
+                {formatStage}
+              </div>
+            )}
             <div className="place-session">
               {place}. {session}
             </div>
@@ -121,15 +128,13 @@ const ScheduleRow: React.FC<ScheduleRowProps> = ({
             </button>
           </div>
         </div>
+        <div className="commentators-container">
+          {commentators.map((name, idx) => (
+            <Commentator key={`${name}-${idx}`} name={name} />
+          ))}
+        </div>
         {optionally && optionally.trim() && (
           <Optionally text={optionally.trim()} isLightTheme={isLightTheme} />
-        )}
-        {commentators.length > 0 && (
-          <div className="commentators-container">
-            {commentators.map((name, idx) => (
-              <Commentator key={`${name}-${idx}`} name={name} />
-            ))}
-          </div>
         )}
       </div>
     </div>

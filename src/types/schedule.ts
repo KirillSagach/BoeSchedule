@@ -3,7 +3,7 @@ export interface ScheduleItem {
   day: string;
   time: string;
   championship: string;
-  stage: string;
+  stage?: string;
   place: string;
   session: string;
   PC?: string;  // флажок для иконки монитора

@@ -2,14 +2,45 @@ import { ScheduleItem } from '../types/schedule';
 import { DAYS_OF_WEEK } from '../constants';
 import { normalizeTime } from './timeUtils';
 
-// Функция для вычисления дня недели из даты в формате DD.MM.YY
+/**
+ * Парсит дату из формата DD.MM.YY или DD.MM.YYYY в объект Date
+ */
+function parseDate(dateStr: string): Date {
+  const [day, month, year] = dateStr.split('.');
+  const fullYear = year.length === 2 ? '20' + year : year;
+  return new Date(`${fullYear}-${month.padStart(2, '0')}-${day.padStart(2, '0')}T12:00:00`);
+}
+
+/**
+ * Получает текущую дату пользователя (без времени, только день)
+ */
+export function getCurrentDate(): Date {
+  const now = new Date();
+  return new Date(now.getFullYear(), now.getMonth(), now.getDate());
+}
+
+/**
+ * Проверяет, является ли дата из расписания равной или старше текущей даты
+ */
+export function isDateEqualOrAfterToday(dateStr: string): boolean {
+  try {
+    const scheduleDate = parseDate(dateStr);
+    const currentDate = getCurrentDate();
+    
+    // Сравниваем только даты (без времени)
+    const scheduleDateOnly = new Date(scheduleDate.getFullYear(), scheduleDate.getMonth(), scheduleDate.getDate());
+    
+    return scheduleDateOnly >= currentDate;
+  } catch (error) {
+    console.error('Error comparing dates:', error, dateStr);
+    return false;
+  }
+}
+
+// Функция для вычисления дня недели из даты в формате DD.MM.YY или DD.MM.YYYY
 export function getDayOfWeekFromDate(dateStr: string): string {
   try {
-    const [day, month, year] = dateStr.split('.');
-    const fullYear = '20' + year;
-    
-    // Создаем дату (без времени, используем полдень для избежания проблем с часовыми поясами)
-    const date = new Date(`${fullYear}-${month.padStart(2, '0')}-${day.padStart(2, '0')}T12:00:00`);
+    const date = parseDate(dateStr);
     
     // Проверяем, что дата валидна
     if (isNaN(date.getTime())) {
@@ -28,9 +59,9 @@ export function getDayOfWeekFromDate(dateStr: string): string {
 // Функция конвертации времени из GMT+3 в локальный часовой пояс пользователя
 export function convertFromGMT3ToLocal(item: ScheduleItem): ScheduleItem {
   try {
-    // Парсим дату в формате DD.MM.YY
+    // Парсим дату в формате DD.MM.YY или DD.MM.YYYY
     const [day, month, year] = item.date.split('.');
-    const fullYear = '20' + year;
+    const fullYear = year.length === 2 ? '20' + year : year;
     
     // Создаем дату в GMT+3 (Europe/Moscow)
     // Формат: YYYY-MM-DDTHH:mm:ss+03:00
@@ -47,10 +78,10 @@ export function convertFromGMT3ToLocal(item: ScheduleItem): ScheduleItem {
     // Конвертируем в локальный часовой пояс пользователя
     const localDate = new Date(gmt3Date);
     
-    // Форматируем новую дату в формате DD.MM.YY вручную
+    // Форматируем новую дату в формате DD.MM.YYYY вручную
     const localDay = String(localDate.getDate()).padStart(2, '0');
     const localMonth = String(localDate.getMonth() + 1).padStart(2, '0');
-    const localYear = String(localDate.getFullYear()).slice(-2);
+    const localYear = String(localDate.getFullYear()); // Полный год (YYYY)
     const newDate = `${localDay}.${localMonth}.${localYear}`;
     
     // Форматируем новое время

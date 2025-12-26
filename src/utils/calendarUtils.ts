@@ -17,9 +17,10 @@ function formatDateForCalendar(date: Date): string {
  * Парсит дату и время из ScheduleItem и создает объекты Date
  */
 function parseScheduleDateTime(item: ScheduleItem): { startDate: Date; endDate: Date } {
-  // Парсим дату из формата DD.MM.YY
+  // Парсим дату из формата DD.MM.YY или DD.MM.YYYY
   const [day, month, year] = item.date.split('.');
-  const fullYear = '20' + year;
+  // Определяем формат: если год имеет 2 символа - старый формат (YY), если 4 - новый (YYYY)
+  const fullYear = year.length === 2 ? '20' + year : year;
   
   // Парсим время из формата HH:MM
   const [hours, minutes] = item.time.split(':');
@@ -38,7 +39,7 @@ function parseScheduleDateTime(item: ScheduleItem): { startDate: Date; endDate: 
  */
 function buildEventDescription(item: ScheduleItem): string {
   const descriptionParts = [
-    `Этап: ${item.stage}`,
+    item.stage && `Этап: ${item.stage}`,
     `Сессия: ${item.session}`,
     item.place && `Место: ${item.place}`,
     item.Commentator1 && `Комментатор: ${item.Commentator1}`,
@@ -58,7 +59,9 @@ export function generateGoogleCalendarUrl(item: ScheduleItem): string {
   const endDateStr = formatDateForCalendar(endDate);
   
   // Формируем название события
-  const eventTitle = `${item.championship} - ${item.stage}: ${item.session}`;
+  const eventTitle = item.stage 
+    ? `${item.championship} - ${item.stage}: ${item.session}`
+    : `${item.championship}: ${item.session}`;
   const description = buildEventDescription(item);
   
   // Кодируем параметры для URL
@@ -95,7 +98,9 @@ export function generateICalendarFile(item: ScheduleItem): string {
   const currentDateStr = formatDateForCalendar(new Date());
   
   // Формируем название события
-  const eventTitle = `${item.championship} - ${item.stage}: ${item.session}`;
+  const eventTitle = item.stage 
+    ? `${item.championship} - ${item.stage}: ${item.session}`
+    : `${item.championship}: ${item.session}`;
   const description = buildEventDescription(item).replace(/\n/g, '\\n');
   const location = item.place || '';
   
@@ -140,13 +145,15 @@ export function downloadICalendarFile(item: ScheduleItem): void {
   };
   
   const championship = sanitizeFileName(item.championship);
-  const stage = sanitizeFileName(item.stage);
+  const stage = item.stage ? sanitizeFileName(item.stage) : '';
   const session = sanitizeFileName(item.session);
   const date = item.date.replace(/\./g, '_');
   
   const link = document.createElement('a');
   link.href = url;
-  link.download = `${championship}-${stage}-${session}-${date}.ics`;
+  link.download = stage 
+    ? `${championship}-${stage}-${session}-${date}.ics`
+    : `${championship}-${session}-${date}.ics`;
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
