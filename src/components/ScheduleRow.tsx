@@ -6,6 +6,7 @@ import Optionally from './Optionally';
 import CalendarIcon from './CalendarIcon';
 import { normalizeTime } from '../utils/timeUtils';
 import { generateGoogleCalendarUrl, downloadICalendarFile } from '../utils/calendarUtils';
+import { formatChampionship, formatStage } from '../utils/textUtils';
 import { ScheduleItem } from '../types/schedule';
 
 interface ScheduleRowProps {
@@ -51,17 +52,9 @@ const ScheduleRow: React.FC<ScheduleRowProps> = ({
   // Нормализуем время к формату ЧЧ:ММ
   const normalizedTime = useMemo(() => normalizeTime(time), [time]);
   
-  // Форматируем чемпионат
-  const formatChampionship = useMemo(() => {
-    const champ = championship?.trim() || '';
-    return champ.endsWith('.') ? champ : champ + '.';
-  }, [championship]);
-
-  // Форматируем этап
-  const formatStage = useMemo(() => {
-    const stageText = stage?.trim() || '';
-    return stageText.endsWith('.') ? stageText.slice(0, -1) : stageText;
-  }, [stage]);
+  // Форматируем чемпионат и этап
+  const formattedChampionship = useMemo(() => formatChampionship(championship), [championship]);
+  const formattedStage = useMemo(() => formatStage(stage), [stage]);
   
   // Создаем объект ScheduleItem для календарей (мемоизируем)
   const scheduleItem = useMemo<ScheduleItem>(() => ({
@@ -98,11 +91,11 @@ const ScheduleRow: React.FC<ScheduleRowProps> = ({
         <div className="content-header">
           <div className="content-text">
             <div className="championship">
-              {formatChampionship}
+              {formattedChampionship}
             </div>
-            {formatStage && (
+            {formattedStage && (
               <div className="stage">
-                {formatStage}
+                {formattedStage}
               </div>
             )}
             <div className="place-session">

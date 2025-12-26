@@ -24,10 +24,15 @@
   align-items: center;
   justify-content: center;
   position: relative;
+  min-width: 26px; /* Минимальная ширина для всех иконок */
+  width: 26px; /* Фиксированная ширина для всех иконок */
+  height: 26px; /* Фиксированная высота для всех иконок */
+  box-sizing: border-box;
+  flex-shrink: 0;
 }
 
 .icon-wrapper--with-number {
-  padding-right: 8px;
+  /* padding-right удален, так как ширина фиксирована */
 }
 
 .icon-wrapper--pc {
