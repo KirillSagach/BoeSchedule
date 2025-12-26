@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/BoeSchedule/static/css/main.fc89a0a2.css",
-    "main.js": "/BoeSchedule/static/js/main.cb94bb5b.js",
+    "main.css": "/BoeSchedule/static/css/main.e51f39c6.css",
+    "main.js": "/BoeSchedule/static/js/main.bc847a72.js",
     "static/js/453.ad49d1db.chunk.js": "/BoeSchedule/static/js/453.ad49d1db.chunk.js",
     "index.html": "/BoeSchedule/index.html",
-    "main.fc89a0a2.css.map": "/BoeSchedule/static/css/main.fc89a0a2.css.map",
-    "main.cb94bb5b.js.map": "/BoeSchedule/static/js/main.cb94bb5b.js.map",
+    "main.e51f39c6.css.map": "/BoeSchedule/static/css/main.e51f39c6.css.map",
+    "main.bc847a72.js.map": "/BoeSchedule/static/js/main.bc847a72.js.map",
     "453.ad49d1db.chunk.js.map": "/BoeSchedule/static/js/453.ad49d1db.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.fc89a0a2.css",
-    "static/js/main.cb94bb5b.js"
+    "static/css/main.e51f39c6.css",
+    "static/js/main.bc847a72.js"
   ]
 }
