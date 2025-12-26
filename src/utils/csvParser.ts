@@ -39,7 +39,6 @@ function validateScheduleItem(item: Partial<ScheduleItem>): item is ScheduleItem
     item.date && 
     item.time && 
     item.championship &&
-    item.stage &&
     item.place &&
     item.session
   );

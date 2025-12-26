@@ -9,7 +9,7 @@ import { ScheduleItem } from './types/schedule';
 import { CSV_URL } from './constants';
 import { parseCSV } from './utils/csvParser';
 import { groupBy } from './utils/dataUtils';
-import { convertFromGMT3ToLocal } from './utils/dateUtils';
+import { convertFromGMT3ToLocal, isDateEqualOrAfterToday } from './utils/dateUtils';
 import { parseBooleanFlag } from './utils/flagUtils';
 
 function App() {
@@ -42,12 +42,17 @@ function App() {
       .finally(() => setLoading(false));
   }, []);
 
-  // Мемоизация конвертированного расписания
+  // Мемоизация конвертированного расписания с фильтрацией по дате
   const convertedSchedule = useMemo(() => {
-    if (!useLocalTime || originalSchedule.length === 0) {
-      return originalSchedule;
+    let schedule = originalSchedule;
+    
+    // Конвертируем время, если нужно
+    if (useLocalTime && schedule.length > 0) {
+      schedule = schedule.map(convertFromGMT3ToLocal);
     }
-    return originalSchedule.map(convertFromGMT3ToLocal);
+    
+    // Фильтруем: оставляем только дни, которые равны или старше текущего дня
+    return schedule.filter(item => isDateEqualOrAfterToday(item.date));
   }, [useLocalTime, originalSchedule]);
 
   // Мемоизация группировки по дням
@@ -91,8 +96,9 @@ function App() {
                 <DayOfWeekDisplay day={day} isLightTheme={isLightTheme} />
               </Header>
               <div className="day-rows-container">
-                {rows.map((row) => {
-                  const rowKey = `${row.date}_${row.time}_${row.championship}_${row.stage}_${row.session}_${row.place}`;
+                {rows.map((row, index) => {
+                  // Создаем уникальный ключ, включая все возможные уникальные поля
+                  const rowKey = `${row.date}_${row.time}_${row.championship}_${row.stage || ''}_${row.session}_${row.place}_${row.Commentator1 || ''}_${row.Commentator2 || ''}_${row.Optionally || ''}_${index}`;
                   return (
                     <ScheduleRow
                       key={rowKey}
@@ -104,8 +110,16 @@ function App() {
                       session={row.session}
                       isLightTheme={isLightTheme}
                       showPC={parseBooleanFlag(row.PC)}
-                      showTG={parseBooleanFlag(row.TG)}
-                      showBCU={parseBooleanFlag(row.BCU)}
+                      tgNumbers={[
+                        parseBooleanFlag(row.TG1) && 1,
+                        parseBooleanFlag(row.TG2) && 2,
+                        parseBooleanFlag(row.TG3) && 3
+                      ].filter((num): num is number => typeof num === 'number')}
+                      bcuNumbers={[
+                        parseBooleanFlag(row.BCU1) && 1,
+                        parseBooleanFlag(row.BCU2) && 2,
+                        parseBooleanFlag(row.BCU3) && 3
+                      ].filter((num): num is number => typeof num === 'number')}
                       commentator1={row.Commentator1}
                       commentator2={row.Commentator2}
                       optionally={row.Optionally}
